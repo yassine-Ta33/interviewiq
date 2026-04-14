@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InterviewIQ — Briefing-Modul</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F6F2;--surface:#fff;--border:#E8E6DF;
+  --text:#1A1916;--muted:#7A7870;
+  --accent:#2D5BE3;--al:#EEF2FD;--am:#8FAAF5;
+  --ok:#1A7A4A;--okl:#EAF5EE;
+  --warn:#B45309;--warnl:#FEF3E2;
+  --aibg:#F0F4FF;--aib:#C7D4FB;
+  --r:12px;--rs:8px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
+.app{max-width:780px;margin:0 auto;padding:24px 16px 60px}
+
+/* Header */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:10px}
+.lmark{width:34px;height:34px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:600}
+.ltxt{font-size:15px;font-weight:600;letter-spacing:-.3px}
+.lsub{font-size:11px;color:var(--muted)}
+.steps{display:flex;align-items:center;gap:4px}
+.sd{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .3s}
+.sd.active{background:var(--accent)}
+.sd.done{background:var(--ok)}
+
+/* Progress */
+.prog{height:3px;background:var(--border);border-radius:2px;margin-bottom:22px;overflow:hidden}
+.pf{height:100%;background:var(--accent);border-radius:2px;transition:width .5s ease}
+
+/* Typography */
+.stitle{font-size:20px;font-weight:600;letter-spacing:-.4px;margin-bottom:5px}
+.ssub{font-size:13px;color:var(--muted);margin-bottom:20px}
+
+/* Mode cards */
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.mcard{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:20px;cursor:pointer;transition:all .2s}
+.mcard:hover{border-color:var(--am);background:var(--al)}
+.mcard.sel{border-color:var(--accent);background:var(--al)}
+.micon{font-size:26px;margin-bottom:8px}
+.mtitle{font-size:14px;font-weight:600;margin-bottom:3px}
+.mdesc{font-size:12px;color:var(--muted);line-height:1.4}
+
+/* Chat */
+.cwrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:12px;overflow:hidden}
+.cmsgs{padding:18px;min-height:300px;max-height:400px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.msg{display:flex;gap:10px;align-items:flex-start}
+.msg.u{flex-direction:row-reverse}
+.av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+.msg.ai .av{background:var(--accent);color:#fff}
+.msg.u .av{background:var(--text);color:#fff}
+.bb{max-width:83%;padding:9px 14px;border-radius:12px;font-size:13.5px;line-height:1.55}
+.msg.ai .bb{background:var(--aibg);border:1px solid var(--aib);border-top-left-radius:4px}
+.msg.u .bb{background:var(--text);color:#fff;border-top-right-radius:4px}
+.dots{display:flex;align-items:center;gap:4px;padding:3px 0}
+.dots span{width:6px;height:6px;border-radius:50%;background:var(--am);animation:bounce 1.2s infinite}
+.dots span:nth-child(2){animation-delay:.2s}
+.dots span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.cfoot{border-top:1px solid var(--border);padding:10px 13px;display:flex;gap:9px;align-items:flex-end}
+.cinp{flex:1;border:1px solid var(--border);border-radius:var(--rs);padding:9px 13px;font-family:'DM Sans',sans-serif;font-size:13.5px;resize:none;outline:none;line-height:1.5;min-height:40px;max-height:110px;background:var(--bg);color:var(--text);transition:border-color .2s}
+.cinp:focus{border-color:var(--accent)}
+.cinp::placeholder{color:var(--muted)}
+.sbtn{width:40px;height:40px;background:var(--accent);border:none;border-radius:var(--rs);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:17px;transition:opacity .2s}
+.sbtn:disabled{opacity:.35;cursor:not-allowed}
+.sbtn:not(:disabled):hover{opacity:.85}
+
+/* Freitext */
+.ftarea{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
+.ftlabel{padding:12px 16px 0;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.ftinp{width:100%;border:none;padding:8px 16px 14px;font-family:'DM Sans',sans-serif;font-size:13.5px;line-height:1.6;resize:none;outline:none;min-height:160px;background:transparent;color:var(--text)}
+.ftinp::placeholder{color:var(--muted)}
+
+/* Buttons */
+.btn{padding:9px 18px;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:500;cursor:pointer;border:none;transition:all .2s}
+.btnp{background:var(--accent);color:#fff}
+.btnp:hover{opacity:.88}
+.btnp:disabled{opacity:.4;cursor:not-allowed}
+.btns{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.btns:hover{background:var(--bg)}
+.brow{display:flex;gap:8px;justify-content:flex-end}
+
+/* Cards */
+.acard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
+.ahead{padding:13px 17px;background:var(--okl);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.ahead h3{font-size:14px;font-weight:600;color:var(--ok)}
+.abody{padding:15px 17px;display:flex;flex-direction:column;gap:16px}
+.albl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:12px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:var(--bg);font-family:'DM Mono',monospace}
+.tag.must{border-color:#C7D4FB;background:var(--al);color:var(--accent)}
+.tag.nice{border-color:var(--border);color:var(--muted)}
+.tag.val{border-color:#9FE1CB;background:var(--okl);color:var(--ok)}
+
+/* Marktabgleich */
+.mrow{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)}
+.mrow:last-child{border-bottom:none}
+.mdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.mdot.g{background:var(--ok)}
+.mdot.a{background:#F59E0B}
+.mdot.r{background:#EF4444}
+
+/* Culture Fit Sliders */
+.cf-grid{display:flex;flex-direction:column;gap:16px}
+.cf-dim{background:var(--bg);border-radius:var(--rs);padding:14px}
+.cf-label{font-size:13px;font-weight:500;margin-bottom:10px}
+.cf-poles{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:6px}
+.cf-slider{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:linear-gradient(to right,var(--accent) 0%,var(--accent) 50%,var(--border) 50%,var(--border) 100%);outline:none;cursor:pointer}
+.cf-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.cf-val{text-align:center;font-size:11px;color:var(--muted);margin-top:4px}
+
+/* Leitfaden */
+.trow{display:flex;align-items:flex-start;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)}
+.trow:last-child{border-bottom:none}
+.ttime{min-width:52px;font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);font-weight:500;padding-top:2px}
+.ttitle{font-size:13px;font-weight:500}
+.tsub{font-size:12px;color:var(--muted);margin-top:1px}
+
+/* Info boxes */
+.hint-box{background:var(--al);border:1px solid var(--aib);border-radius:var(--rs);padding:11px 13px;font-size:13px;line-height:1.5}
+.warn-box{background:var(--warnl);border:1px solid #FCD98A;border-radius:var(--rs);padding:11px 13px;font-size:13px;line-height:1.5;color:var(--warn)}
+.ok-box{background:var(--okl);border:1px solid #9FE1CB;border-radius:var(--rs);padding:11px 13px;font-size:13px;line-height:1.5;color:var(--ok)}
+
+/* Loading */
+.lswrap{padding:28px 0;display:flex;flex-direction:column;gap:10px}
+.lstep{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);opacity:0;transform:translateY(4px);transition:all .4s}
+.lstep.vis{opacity:1;transform:translateY(0)}
+.lstep.done{color:var(--ok)}
+.lstep .li{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.lstep.done .li{background:var(--okl);border-color:var(--ok);color:var(--ok)}
+
+.hidden{display:none!important}
+
+/* API Key input */
+.api-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:20px}
+.api-label{font-size:12px;font-weight:500;color:var(--muted);margin-bottom:6px}
+.api-input{width:100%;border:1px solid var(--border);border-radius:var(--rs);padding:9px 13px;font-family:'DM Mono',monospace;font-size:12px;outline:none;background:var(--bg);color:var(--text)}
+.api-input:focus{border-color:var(--accent)}
+.api-hint{font-size:11px;color:var(--muted);margin-top:5px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">
+    <div class="lmark">I</div>
+    <div><div class="ltxt">InterviewIQ</div><div class="lsub">Briefing & Eignungsdiagnostik</div></div>
+  </div>
+  <div class="steps">
+    <div class="sd active" id="d0"></div>
+    <div class="sd" id="d1"></div>
+    <div class="sd" id="d2"></div>
+    <div class="sd" id="d3"></div>
+    <div class="sd" id="d4"></div>
+  </div>
+</div>
+<div class="prog"><div class="pf" id="pf" style="width:5%"></div></div>
+
+<!-- ═══ S0: API Key + Modus ═══════════════════════════════ -->
+<div id="s0">
+  <div class="stitle">Neues Stellenprofil anlegen</div>
+  <div class="ssub">Trage einmalig deinen API-Key ein und wähle danach den Briefing-Modus.</div>
+
+  <div class="api-wrap">
+    <div class="api-label">Anthropic API Key</div>
+    <input class="api-input" type="password" id="apikey" placeholder="sk-ant-..." />
+    <div class="api-hint">Der Key wird nur lokal im Browser gespeichert und nicht weitergegeben. <a href="https://console.anthropic.com" target="_blank" style="color:var(--accent)">Key holen →</a></div>
+  </div>
+
+  <div class="mgrid">
+    <div class="mcard" id="mc-a" onclick="pick('chat')">
+      <div class="micon">💬</div>
+      <div class="mtitle">KI-Briefing-Gespräch</div>
+      <div class="mdesc">Die KI führt dich durch 6 gezielte Fragen — strukturiert, schnell, vollständig.</div>
+    </div>
+    <div class="mcard" id="mc-b" onclick="pick('upload')">
+      <div class="micon">📄</div>
+      <div class="mtitle">Freitext eingeben</div>
+      <div class="mdesc">Gib die Stelleninfos frei ein — die KI strukturiert und analysiert alles.</div>
+    </div>
+  </div>
+  <div class="brow">
+    <button class="btn btnp" id="btn0" onclick="go1()" disabled style="opacity:.4;cursor:not-allowed">Weiter →</button>
+  </div>
+</div>
+
+<!-- ═══ S1a: Chat ══════════════════════════════════════════ -->
+<div id="s1c" class="hidden">
+  <div class="stitle">KI-Briefing-Gespräch</div>
+  <div class="ssub">Beantworte die Fragen zur Stelle — Profil und Leitfaden werden exakt darauf aufgebaut.</div>
+  <div class="cwrap">
+    <div class="cmsgs" id="msgs"></div>
+    <div class="cfoot">
+      <textarea class="cinp" id="ci" placeholder="Deine Antwort…" rows="1"
+        onkeydown="onK(event)" oninput="rsz(this)"></textarea>
+      <button class="sbtn" id="sb" onclick="send()">↑</button>
+    </div>
+  </div>
+  <div class="brow">
+    <button class="btn btns" onclick="go0()">← Zurück</button>
+    <button class="btn btnp hidden" id="btn-cf" onclick="goCultureFit()">Culture Fit konfigurieren →</button>
+  </div>
+</div>
+
+<!-- ═══ S1b: Freitext ══════════════════════════════════════ -->
+<div id="s1f" class="hidden">
+  <div class="stitle">Stelle beschreiben</div>
+  <div class="ssub">Schreib alles was du weißt — Titel, Aufgaben, Skills, Team, Besonderheiten.</div>
+  <div class="ftarea">
+    <div class="ftlabel">Briefing-Text</div>
+    <textarea class="ftinp" id="ft"
+      placeholder="z.B.: Wir suchen einen Recruiter für unser HR-Team in München. Aufgaben: Active Sourcing, Bewerbermanagement, Interviews führen, enge Zusammenarbeit mit Hiring Managern. Must-have: 3+ Jahre Recruiting-Erfahrung, LinkedIn Recruiter, Kommunikationsstärke. Nice-to-have: ATS-Erfahrung (Workday, Greenhouse), Englisch fließend. Team: 5 Personen, sehr kollegialer Umgang, agile Arbeitsweise…"></textarea>
+  </div>
+  <div class="brow">
+    <button class="btn btns" onclick="go0()">← Zurück</button>
+    <button class="btn btnp" onclick="goFromText()">Weiter →</button>
+  </div>
+</div>
+
+<!-- ═══ S2: Culture Fit ════════════════════════════════════ -->
+<div id="s2-cf" class="hidden">
+  <div class="stitle">Culture Fit konfigurieren</div>
+  <div class="ssub">Positioniere die Regler — sie beschreiben die Kultur deines Unternehmens bzw. Teams. Daraus werden später gezielte Diagnosefragen generiert.</div>
+
+  <div class="acard">
+    <div class="ahead"><span>🎯</span><h3>4 Wertedimensionen (wissenschaftlich validiert)</h3></div>
+    <div class="abody">
+      <div class="cf-grid" id="cf-grid">
+        <!-- Dynamisch befüllt -->
+      </div>
+    </div>
+  </div>
+
+  <div class="brow" style="margin-top:4px">
+    <button class="btn btns" onclick="goBack()">← Zurück</button>
+    <button class="btn btnp" onclick="runAnalysis()">Profil analysieren →</button>
+  </div>
+</div>
+
+<!-- ═══ S3: Loading ════════════════════════════════════════ -->
+<div id="s3-load" class="hidden">
+  <div class="stitle">Profil wird erstellt…</div>
+  <div class="ssub">KI analysiert deine Angaben und gleicht mit Marktdaten ab.</div>
+  <div class="lswrap">
+    <div class="lstep" id="l0"><div class="li">1</div>Stelleninfos werden extrahiert…</div>
+    <div class="lstep" id="l1"><div class="li">2</div>Kompetenzen werden gewichtet…</div>
+    <div class="lstep" id="l2"><div class="li">3</div>Culture Fit Profil wird erstellt…</div>
+    <div class="lstep" id="l3"><div class="li">4</div>Marktabgleich wird durchgeführt…</div>
+    <div class="lstep" id="l4"><div class="li">5</div>Interview-Leitfaden wird generiert…</div>
+  </div>
+</div>
+
+<!-- ═══ S4: Ergebnis ══════════════════════════════════════ -->
+<div id="s4-result" class="hidden">
+  <div class="stitle">Anforderungsprofil ✓</div>
+  <div class="ssub">Prüfe das Profil — bei Bestätigung wird der Interview-Leitfaden generiert.</div>
+  <div id="profil-card"></div>
+  <div class="brow" style="margin-top:10px">
+    <button class="btn btns" onclick="go0()">← Neu starten</button>
+    <button class="btn btnp" onclick="showGuide()">Bestätigen & Leitfaden anzeigen →</button>
+  </div>
+</div>
+
+<!-- ═══ S5: Leitfaden ══════════════════════════════════════ -->
+<div id="s5-guide" class="hidden">
+  <div class="stitle">Interview-Leitfaden ✓</div>
+  <div class="ssub" id="guide-sub"></div>
+  <div id="guide-card"></div>
+  <div class="brow" style="margin-top:10px">
+    <button class="btn btns" onclick="go0()">← Neue Stelle</button>
+    <button class="btn btnp" onclick="alert('🚀 Live-Interview-Modul folgt im nächsten Release!')">Live-Interview starten →</button>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let mode = null;
+let qIdx = 0;
+let answers = [];
+let isBusy = false;
+let cfValues = {};
+let rawInput = '';
+let currentData = null;
+let lastStep = 'chat';
+
+// ═══════════════════════════════════════════════════════════
+// CULTURE FIT DIMENSIONEN (wissenschaftlich basiert, Big Five / OCP)
+// ═══════════════════════════════════════════════════════════
+const CF_DIMS = [
+  {
+    id: 'struktur',
+    label: 'Arbeitsweise & Struktur',
+    left: 'Sehr strukturiert & prozessorientiert',
+    right: 'Agil & flexibel, wenig feste Prozesse',
+    leftQ: 'Beschreibe eine Situation, in der du mit wenig Vorgaben und viel Eigenverantwortung arbeiten musstest. Wie bist du damit umgegangen?',
+    rightQ: 'Wie gehst du damit um, wenn sich Prioritäten kurzfristig ändern und du einen anderen Plan verfolgen musst als ursprünglich geplant?'
+  },
+  {
+    id: 'entscheidung',
+    label: 'Entscheidungsstil',
+    left: 'Konsensorientiert, breite Abstimmung',
+    right: 'Eigenständig & schnell, wenig Abstimmung',
+    leftQ: 'Erzähl mir von einer Entscheidung, bei der du verschiedene Stakeholder ins Boot geholt hast — wie hast du das moderiert?',
+    rightQ: 'Gab es mal eine Situation, in der du eine wichtige Entscheidung allein treffen musstest ohne auf andere warten zu können? Wie hast du entschieden?'
+  },
+  {
+    id: 'wandel',
+    label: 'Umgang mit Veränderung',
+    left: 'Stabilität & klare Strukturen bevorzugt',
+    right: 'Wandel & Innovation aktiv vorantreiben',
+    leftQ: 'Wie stellst du sicher, dass du in einem sich schnell verändernden Umfeld den Überblick behältst?',
+    rightQ: 'Beschreibe eine Initiative, bei der du Veränderungen proaktiv angestoßen hast — auch gegen Widerstände.'
+  },
+  {
+    id: 'kommunikation',
+    label: 'Kommunikationsstil',
+    left: 'Formal, schriftlich, strukturiert',
+    right: 'Direkt, informell, persönlich',
+    leftQ: 'Wie bereitest du wichtige schriftliche Kommunikation (z.B. Reports, E-Mails an Management) vor?',
+    rightQ: 'Wie gehst du mit Konflikten oder Meinungsverschiedenheiten im Team um — sprichst du sie direkt an?'
+  }
+];
+
+// ═══════════════════════════════════════════════════════════
+// CHAT FRAGEN
+// ═══════════════════════════════════════════════════════════
+const Qs = [
+  'Hallo! Ich helfe dir, das Stellenprofil zu erstellen. Fangen wir an: <strong>Wie lautet die genaue Stellenbezeichnung</strong> und in welchem Bereich oder Team wird die Person eingesetzt?',
+  'Gut danke! Was sind die <strong>3–5 wichtigsten Aufgaben</strong>, die diese Person täglich oder wöchentlich erledigen wird?',
+  'Was sind die <strong>absoluten Must-have-Qualifikationen</strong>? Also Dinge ohne die ein Kandidat sofort ausscheidet — Ausbildung, Tools, Erfahrungsjahre, Zertifikate?',
+  'Gibt es <strong>Nice-to-have-Skills</strong>, die ein Kandidat mitbringen könnte, aber kein K.O.-Kriterium sind?',
+  'Wie viel <strong>Berufserfahrung</strong> sollte die Person mitbringen und welches <strong>Senioritätslevel</strong> sucht ihr (Junior / Mid / Senior / Lead)?',
+  'Letzte Frage: Gibt es <strong>Besonderheiten</strong> bei dieser Stelle — Remote-Anteil, Reisebereitschaft, besondere Projekte — die ein Kandidat kennen sollte?'
+];
+
+const Bridges = [
+  () => 'Danke, notiert! Weiter:',
+  () => 'Gut, die Aufgaben sind klar. Nächste Frage:',
+  () => 'Must-haves festgehalten. Weiter:',
+  () => 'Nice-to-haves notiert. Weiter:',
+  () => 'Senioritätslevel notiert. Letzte Frage:'
+];
+
+// ═══════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════
+function pick(m) {
+  mode = m;
+  document.getElementById('mc-a').classList.toggle('sel', m === 'chat');
+  document.getElementById('mc-b').classList.toggle('sel', m === 'upload');
+  const b = document.getElementById('btn0');
+  b.disabled = false; b.style.opacity = '1'; b.style.cursor = 'pointer';
+}
+
+function go0() {
+  hideAll(); show('s0'); setP(5); setDots(0);
+  qIdx = 0; answers = []; isBusy = false; rawInput = '';
+  document.getElementById('msgs').innerHTML = '';
+  document.getElementById('btn-cf').classList.add('hidden');
+}
+
+function go1() {
+  const key = document.getElementById('apikey').value.trim();
+  if (!key) { alert('Bitte zuerst den API Key eingeben.'); return; }
+  if (!mode) return;
+  hideAll();
+  if (mode === 'chat') { show('s1c'); setP(20); setDots(1); if (qIdx === 0) kickChat(); }
+  else { show('s1f'); setP(20); setDots(1); }
+}
+
+function goBack() {
+  hideAll();
+  if (lastStep === 'chat') { show('s1c'); setP(20); setDots(1); }
+  else { show('s1f'); setP(20); setDots(1); }
+}
+
+function goCultureFit() {
+  lastStep = 'chat';
+  rawInput = answers.join('\n');
+  showCultureFit();
+}
+
+function goFromText() {
+  const t = document.getElementById('ft').value.trim();
+  if (t.length < 15) { alert('Bitte mehr Text eingeben.'); return; }
+  rawInput = t;
+  lastStep = 'upload';
+  showCultureFit();
+}
+
+function showCultureFit() {
+  hideAll(); show('s2-cf'); setP(50); setDots(2);
+  renderCFSliders();
+}
+
+function renderCFSliders() {
+  const grid = document.getElementById('cf-grid');
+  grid.innerHTML = CF_DIMS.map(d => `
+    <div class="cf-dim">
+      <div class="cf-label">${d.label}</div>
+      <div class="cf-poles">
+        <span>${d.left}</span>
+        <span>${d.right}</span>
+      </div>
+      <input type="range" class="cf-slider" id="cf-${d.id}" min="0" max="100" value="50"
+        oninput="updateSlider(this, '${d.id}')">
+      <div class="cf-val" id="cfv-${d.id}">Ausgewogen</div>
+    </div>
+  `).join('');
+  // Init values
+  CF_DIMS.forEach(d => { cfValues[d.id] = 50; });
+}
+
+function updateSlider(el, id) {
+  const v = parseInt(el.value);
+  cfValues[id] = v;
+  const dim = CF_DIMS.find(d => d.id === id);
+  let label;
+  if (v < 25) label = dim.left;
+  else if (v < 40) label = 'Eher ' + dim.left.split('&')[0].trim().toLowerCase();
+  else if (v <= 60) label = 'Ausgewogen';
+  else if (v <= 75) label = 'Eher ' + dim.right.split(',')[0].trim().toLowerCase();
+  else label = dim.right.split(',')[0];
+  document.getElementById('cfv-' + id).textContent = label;
+
+  // Update gradient
+  el.style.background = `linear-gradient(to right, var(--accent) 0%, var(--accent) ${v}%, var(--border) ${v}%, var(--border) 100%)`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// CHAT
+// ═══════════════════════════════════════════════════════════
+function kickChat() {
+  setTimeout(() => appendAI(Qs[0]), 500);
+}
+
+function send() {
+  if (isBusy) return;
+  const el = document.getElementById('ci');
+  const txt = el.value.trim();
+  if (!txt) return;
+  el.value = ''; rsz(el);
+  appendUser(txt);
+  answers.push(txt);
+  const i = qIdx++;
+
+  if (qIdx >= Qs.length) {
+    isBusy = true;
+    setTimeout(() => {
+      appendAI('Super — ich habe alle Informationen! Klicke auf <strong>"Culture Fit konfigurieren"</strong> um fortzufahren.');
+      document.getElementById('btn-cf').classList.remove('hidden');
+      isBusy = false;
+    }, 900);
+  } else {
+    isBusy = true;
+    document.getElementById('sb').disabled = true;
+    const bridge = i < Bridges.length ? Bridges[i]() + ' ' : '';
+    setTimeout(() => {
+      appendAI(bridge + Qs[qIdx]);
+      isBusy = false;
+      document.getElementById('sb').disabled = false;
+    }, 900 + Math.random() * 400);
+  }
+}
+
+function appendUser(t) {
+  const m = document.getElementById('msgs');
+  m.innerHTML += `<div class="msg u"><div class="av">R</div><div class="bb">${esc(t)}</div></div>`;
+  m.scrollTop = 99999;
+}
+
+function appendAI(t) {
+  const m = document.getElementById('msgs');
+  const id = 'ai' + Date.now();
+  m.innerHTML += `<div class="msg ai"><div class="av" style="font-size:9px">KI</div><div class="bb" id="${id}"><div class="dots"><span></span><span></span><span></span></div></div></div>`;
+  m.scrollTop = 99999;
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = t;
+    m.scrollTop = 99999;
+  }, 650);
+}
+
+// ═══════════════════════════════════════════════════════════
+// ANALYSE — echte API
+// ═══════════════════════════════════════════════════════════
+async function runAnalysis() {
+  hideAll(); show('s3-load'); setP(70); setDots(3);
+
+  // Loading animation
+  ['l0','l1','l2','l3','l4'].forEach((id, i) => {
+    setTimeout(() => document.getElementById(id).classList.add('vis'), 200 + i * 800);
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      el.classList.add('done');
+      el.querySelector('.li').textContent = '✓';
+    }, 700 + i * 800);
+  });
+
+  // Culture Fit Profil als Text
+  const cfProfile = CF_DIMS.map(d => {
+    const v = cfValues[d.id] || 50;
+    const tendenz = v < 35 ? d.left : v > 65 ? d.right : 'Ausgewogen zwischen ' + d.left.split('&')[0] + ' und ' + d.right.split(',')[0];
+    return `${d.label}: ${tendenz} (Wert: ${v}/100)`;
+  }).join('\n');
+
+  const prompt = `Du bist ein erfahrener HR-Experte und Eignungsdiagnostiker. Analysiere folgendes Stellen-Briefing und erstelle ein strukturiertes Anforderungsprofil.
+
+BRIEFING:
+${rawInput}
+
+CULTURE FIT PROFIL DES UNTERNEHMENS:
+${cfProfile}
+
+Antworte NUR mit einem validen JSON-Objekt, kein Text davor oder danach, keine Markdown-Backticks:
+{
+  "titel": "Stellentitel",
+  "bereich": "Abteilung/Bereich",
+  "senioritaet": "Junior/Mid/Senior/Lead",
+  "aufgaben": ["Aufgabe 1", "Aufgabe 2", "Aufgabe 3", "Aufgabe 4"],
+  "must": ["Skill 1", "Skill 2", "Skill 3"],
+  "nice": ["Skill 1", "Skill 2"],
+  "markt": [
+    {"d": "g", "skill": "Skill", "h": "Markteinschätzung"},
+    {"d": "a", "skill": "Skill", "h": "Hinweis"},
+    {"d": "r", "skill": "Skill", "h": "Fehlt im Profil — Markt erwartet es"}
+  ],
+  "cf_fragen": [
+    {"dim": "Dimension", "frage": "Konkrete verhaltensverankerte Culture-Fit-Frage", "was_messen": "Was diese Frage misst"},
+    {"dim": "Dimension", "frage": "...", "was_messen": "..."},
+    {"dim": "Dimension", "frage": "...", "was_messen": "..."}
+  ],
+  "besonders": "Besonderheiten der Stelle",
+  "markt_hinweis": "KI-Einschätzung zu Lücken oder Stärken des Profils"
+}
+
+Wichtig: Die cf_fragen müssen exakt auf das Culture-Fit-Profil abgestimmt sein (${cfProfile.substring(0,100)}...). Keine generischen Fragen.`;
+
+  try {
+    const apiKey = document.getElementById('apikey').value.trim();
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-client-side-request-allowed': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1500,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    if (!data.content || !data.content[0]) throw new Error('Keine Antwort');
+    const raw = data.content[0].text.replace(/```json|```/g, '').trim();
+    currentData = JSON.parse(raw);
+    setTimeout(() => showProfil(), 4500);
+  } catch(e) {
+    // Fallback: lokale Verarbeitung
+    setTimeout(() => {
+      currentData = buildFallback();
+      showProfil();
+    }, 4500);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// FALLBACK (wenn kein API Key)
+// ═══════════════════════════════════════════════════════════
+function buildFallback() {
+  const titel = extractTitle(rawInput);
+  const cfFragen = CF_DIMS.map(d => {
+    const v = cfValues[d.id] || 50;
+    const frage = v <= 50 ? d.leftQ : d.rightQ;
+    return { dim: d.label, frage, was_messen: d.label + ' Passung' };
+  }).slice(0, 3);
+
+  return {
+    titel,
+    bereich: 'HR / Operations',
+    senioritaet: 'Mid-Level',
+    aufgaben: extractList(rawInput).slice(0, 4),
+    must: ['Relevante Berufserfahrung', 'Fachkenntnisse', 'Kommunikationsstärke'],
+    nice: ['Zusatzqualifikationen', 'Branchenerfahrung'],
+    markt: [
+      { d: 'g', skill: 'Kernkompetenz', h: 'Marktstandard — gut abgedeckt' },
+      { d: 'a', skill: 'Digitale Tools', h: 'Zunehmend erwartet — prüfe ob relevant' },
+      { d: 'r', skill: 'Englischkenntnisse', h: 'Oft nicht definiert — bei vielen Stellen erwartet' }
+    ],
+    cf_fragen: cfFragen,
+    besonders: 'Bitte API Key eingeben für vollständige KI-Analyse.',
+    markt_hinweis: '⚠️ Für präzise Marktanalyse bitte Anthropic API Key eingeben.'
+  };
+}
+
+function extractTitle(text) {
+  const known = ['recruiter','sourcer','talent','hr manager','personalreferent','buchhalter',
+    'accountant','controller','steuerberater','sales','vertrieb','account manager',
+    'developer','entwickler','engineer','projektmanager','product manager','marketing',
+    'redakteur','assistent','einkäufer','logistik'];
+  const lower = text.toLowerCase();
+  for (const k of known) {
+    if (lower.includes(k)) return k.charAt(0).toUpperCase() + k.slice(1);
+  }
+  return text.split(/\s+/).slice(0, 3).join(' ');
+}
+
+function extractList(text) {
+  const parts = text.split(/[,\n;]/).map(s => s.trim()).filter(s => s.length > 3 && s.length < 80);
+  return parts.length >= 2 ? parts.slice(0, 5) : [text.substring(0, 50)];
+}
+
+// ═══════════════════════════════════════════════════════════
+// PROFIL ANZEIGEN
+// ═══════════════════════════════════════════════════════════
+function showProfil() {
+  hideAll(); show('s4-result'); setP(85); setDots(3);
+  const d = currentData;
+
+  document.getElementById('profil-card').innerHTML = `
+    <div class="acard">
+      <div class="ahead"><span>✓</span><h3>${d.titel} · ${d.bereich} · ${d.senioritaet || ''}</h3></div>
+      <div class="abody">
+        <div>
+          <div class="albl">Hauptaufgaben</div>
+          <div class="tags">${(d.aufgaben||[]).map(t => `<span class="tag">${t}</span>`).join('')}</div>
+        </div>
+        <div>
+          <div class="albl">Must-have Skills</div>
+          <div class="tags">${(d.must||[]).map(t => `<span class="tag must">${t}</span>`).join('')}</div>
+        </div>
+        <div>
+          <div class="albl">Nice-to-have</div>
+          <div class="tags">${(d.nice||[]).map(t => `<span class="tag nice">${t}</span>`).join('')}</div>
+        </div>
+        <div>
+          <div class="albl">Marktabgleich</div>
+          ${(d.markt||[]).map(m => `
+            <div class="mrow">
+              <div class="mdot ${m.d}"></div>
+              <strong style="min-width:180px;font-size:13px">${m.skill}</strong>
+              <span style="font-size:12px;color:var(--muted)">${m.h}</span>
+            </div>`).join('')}
+        </div>
+        <div>
+          <div class="albl">Culture Fit — Diagnosefragen (verhaltensverankert)</div>
+          ${(d.cf_fragen||[]).map(f => `
+            <div style="background:var(--bg);border-radius:var(--rs);padding:12px;margin-bottom:8px">
+              <div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">${f.dim}</div>
+              <div style="font-size:13px;line-height:1.5;margin-bottom:4px">${f.frage}</div>
+              <div style="font-size:11px;color:var(--muted)">Misst: ${f.was_messen}</div>
+            </div>`).join('')}
+        </div>
+        <div>
+          <div class="albl">Besonderheiten</div>
+          <div style="font-size:13px;color:var(--muted)">${d.besonders||'—'}</div>
+        </div>
+        <div class="${(d.markt_hinweis||'').startsWith('⚠️') ? 'warn-box' : 'ok-box'}">${d.markt_hinweis||''}</div>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// LEITFADEN
+// ═══════════════════════════════════════════════════════════
+function showGuide() {
+  hideAll(); show('s5-guide'); setP(100); setDots(4);
+  const d = currentData;
+  document.getElementById('guide-sub').textContent = `${d.titel} · MMO-Standard · 60-Minuten-Version`;
+
+  const starFragen = generateStar(d.titel, d.must, d.aufgaben);
+  const situativ   = generateSituativ(d.titel, d.aufgaben);
+
+  document.getElementById('guide-card').innerHTML = `
+    <div class="acard">
+      <div class="ahead"><span>📋</span><h3>Interview-Leitfaden · ${d.titel}</h3></div>
+      <div class="abody">
+        <div>
+          <div class="albl">Gesprächsstruktur (60 Min)</div>
+          ${[
+            ['05 min','Warm-up & Rahmen','Angenehme Atmosphäre, Ablauf erklären — keine Bewertung'],
+            ['08 min','Selbstvorstellung Kandidat','Berufsweg, Motivation, aktuelle Situation — nach Anforderungsdimensionen bewerten'],
+            ['05 min','Freier Gesprächsteil','Anknüpfen — Wechselmotivation, erste Eindrücke'],
+            ['05 min',`Fachfragen ${d.titel}`,'Kernwissen prüfen, Bezug zu Must-haves herstellen'],
+            ['15 min','Biografische Fragen (STAR)','3 Verhaltensfragen — verhaltensverankerte Skala 1–5'],
+            ['08 min','Culture Fit Diagnose','3 gezielte Fragen aus dem Kulturprofil — Tendenz beobachten'],
+            ['07 min','Situative Fragen','2 Szenarien aus dem echten Joballtag'],
+            ['05 min','Fragen des Kandidaten','Dedizierte Zeit — nicht kürzen!'],
+            ['02 min','Abschluss','Zeitplan, nächste Schritte, offene Punkte'],
+          ].map(([z,t,s]) => `
+            <div class="trow">
+              <div class="ttime">${z}</div>
+              <div><div class="ttitle">${t}</div><div class="tsub">${s}</div></div>
+            </div>`).join('')}
+        </div>
+        <div>
+          <div class="albl">STAR-Fragen — biografisch, aus deinen Angaben</div>
+          ${starFragen.map(q => `
+            <div class="mrow">
+              <div class="mdot g" style="margin-top:5px"></div>
+              <div style="font-size:13px;line-height:1.5">${q}</div>
+            </div>`).join('')}
+        </div>
+        <div>
+          <div class="albl">Culture Fit Fragen — verhaltensverankert</div>
+          ${(d.cf_fragen||[]).map(f => `
+            <div class="mrow">
+              <div class="mdot" style="background:var(--accent);margin-top:5px"></div>
+              <div>
+                <div style="font-size:11px;color:var(--accent);font-weight:500;margin-bottom:2px">${f.dim}</div>
+                <div style="font-size:13px;line-height:1.5">${f.frage}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+        <div>
+          <div class="albl">Situative Fragen — aus Aufgaben dieser Stelle</div>
+          ${situativ.map(q => `
+            <div class="mrow">
+              <div class="mdot a" style="margin-top:5px"></div>
+              <div style="font-size:13px;line-height:1.5">${q}</div>
+            </div>`).join('')}
+        </div>
+        <div class="ok-box">✓ Leitfaden gespeichert. Im nächsten Schritt: Live-Interview-Modul mit Timer, adaptiver Fragenführung und Echtzeit-Scoring.</div>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// FRAGEN-GENERATOR
+// ═══════════════════════════════════════════════════════════
+function generateStar(titel, must, aufgaben) {
+  const t = (titel||'').toLowerCase();
+  const a1 = (aufgaben||[])[0] || 'die Hauptaufgabe';
+  const a2 = (aufgaben||[])[1] || 'ein wichtiges Projekt';
+
+  if (t.includes('recruiter') || t.includes('talent') || t.includes('personal')) return [
+    'Erzähl mir von einer schwer zu besetzenden Stelle, die du erfolgreich gefüllt hast. Welche Strategie hast du gewählt?',
+    'Beschreibe eine Situation, in der ein Kandidat kurz vor Vertragsabschluss abgesprungen ist. Wie hast du reagiert?',
+    'Gab es mal einen Konflikt mit einem Hiring Manager über Kandidaten oder den Prozess? Wie hast du das gelöst?'
+  ];
+  if (t.includes('buchhalter') || t.includes('accountant')) return [
+    'Beschreibe eine Situation, in der du einen Fehler im Jahresabschluss kurz vor Deadline entdeckt hast. Wie bist du vorgegangen?',
+    'Erzähl mir von einem Buchhaltungsprozess, den du eigenständig verbessert oder digitalisiert hast.',
+    'Gab es mal Druck von Führungskräften zu Zahlen, die du nicht vertreten konntest? Wie hast du reagiert?'
+  ];
+  if (t.includes('controller')) return [
+    'Erzähl mir von einer Situation, in der dein Forecast signifikant von der Realität abwich. Was hast du getan?',
+    'Beschreibe ein Projekt, bei dem du Controlling-Prozesse eigenständig optimiert hast.',
+    'Wie hast du in der Vergangenheit das Management mit Zahlen überzeugt, eine schwierige Entscheidung zu treffen?'
+  ];
+  if (t.includes('sales') || t.includes('vertrieb')) return [
+    'Erzähl mir von deinem bisher größten Deal — wie hast du ihn vorbereitet und was war entscheidend?',
+    'Beschreibe eine Situation, in der du einen Kunden kurz vor Abschluss noch verloren hast. Was hast du gelernt?',
+    'Wie hast du eine neue Region oder ein neues Kundensegment erfolgreich aufgebaut?'
+  ];
+  return [
+    `Erzähl mir von einer Situation, in der du "${a1}" unter besonderem Zeitdruck erfolgreich gemeistert hast.`,
+    `Beschreibe einen Fall, in dem du bei "${a2}" eigenständig eine wichtige Entscheidung treffen musstest.`,
+    'Gab es mal eine Situation, in der deine Vorgehensweise auf starken Widerstand gestoßen ist? Wie hast du reagiert?'
+  ];
+}
+
+function generateSituativ(titel, aufgaben) {
+  const t = (titel||'').toLowerCase();
+  const a1 = (aufgaben||[])[0] || 'deine Hauptaufgabe';
+
+  if (t.includes('recruiter') || t.includes('talent')) return [
+    'Du hast drei offene Stellen gleichzeitig, alle dringend. Wie priorisierst du und wie kommunizierst du das?',
+    'Ein Hiring Manager lehnt alle deine Kandidaten ab, ohne konkrete Begründung. Wie gehst du damit um?'
+  ];
+  if (t.includes('sales') || t.includes('vertrieb')) return [
+    'Du bist kurz vor Quartalsende und 20% unter Plan. Dein größter Deal droht zu platzen. Was tust du zuerst?',
+    'Ein Bestandskunde droht wegen eines günstigeren Wettbewerbers abzuwandern. Was ist deine Strategie?'
+  ];
+  return [
+    `Stell dir vor, du stellst fest, dass der bisherige Prozess für "${a1}" fehlerhaft ist — niemand hat es bisher angesprochen. Was tust du?`,
+    'Dein Vorgesetzter bittet dich kurzfristig um einen wichtigen Report bis morgen früh — du hast bereits andere Prioritäten. Wie gehst du vor?'
+  ];
+}
+
+// ═══════════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════════
+function hideAll() {
+  ['s0','s1c','s1f','s2-cf','s3-load','s4-result','s5-guide']
+    .forEach(id => document.getElementById(id).classList.add('hidden'));
+}
+function show(id) { document.getElementById(id).classList.remove('hidden'); }
+function setP(p) { document.getElementById('pf').style.width = p + '%'; }
+function setDots(a) {
+  for (let i = 0; i < 5; i++) {
+    const d = document.getElementById('d' + i);
+    d.classList.remove('active', 'done');
+    if (i < a) d.classList.add('done');
+    else if (i === a) d.classList.add('active');
+  }
+}
+function onK(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }
+function rsz(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 110) + 'px'; }
+function esc(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// API Key aus localStorage laden
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('iq_apikey');
+  if (saved) document.getElementById('apikey').value = saved;
+  document.getElementById('apikey').addEventListener('change', e => {
+    localStorage.setItem('iq_apikey', e.target.value);
+  });
+});
+</script>
+</body>
+</html>
